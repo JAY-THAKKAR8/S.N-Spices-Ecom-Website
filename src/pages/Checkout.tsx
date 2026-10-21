@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -8,11 +8,26 @@ import { useCart, useCartSummary } from '../store/cart';
 import { useQuote } from '../lib/useQuote';
 import { api, rupee, waLink } from '../lib/api';
 import { orderWhatsAppText } from '../lib/whatsapp';
+import type { Order } from '../types';
 
 const SAVED_KEY = 'sn_checkout_info';
-const loadSaved = () => {
-  try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || {}; } catch { return {}; }
+type SavedInfo = Partial<Record<'name' | 'phone' | 'address' | 'city' | 'pincode', string>>;
+
+const loadSaved = (): SavedInfo => {
+  try { return JSON.parse(localStorage.getItem(SAVED_KEY) || 'null') || {}; } catch { return {}; }
 };
+
+interface OrderRequest {
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  pincode: string;
+  note: string;
+  paymentMethod: string;
+  items: { variantId: number; qty: number }[];
+  couponCode: string | null;
+}
 
 
 export default function Checkout() {
@@ -33,9 +48,9 @@ export default function Checkout() {
     note: '',
     paymentMethod: 'COD',
   });
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const set = (k: keyof typeof f) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
 
-  const m = useMutation({
+  const m = useMutation<Order, Error, OrderRequest>({
     mutationFn: (body) => api.post('/orders', body).then((r) => r.data),
     onSuccess: (order) => {
       try {
@@ -50,7 +65,7 @@ export default function Checkout() {
 
   if (!count && !placed.current) return <Navigate to="/cart" replace />;
 
-  const submit = (e) => {
+  const submit = (e: FormEvent) => {
     e.preventDefault();
     m.mutate({ ...f, items: list.map((i) => ({ variantId: i.variantId, qty: i.qty })), couponCode: couponCode || null });
   };
@@ -169,7 +184,7 @@ export default function Checkout() {
   );
 }
 
-function Header({ n, title, sub }) {
+function Header({ n, title, sub }: { n: number | string; title: string; sub: string }) {
   return (
     <div className="flex items-center gap-space-sm bg-surface-container-low p-space-lg">
       <span className="w-8 h-8 rounded-full bg-primary text-on-primary grid place-items-center text-headline-sm">{n}</span>

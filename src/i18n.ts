@@ -174,7 +174,7 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-const setHtmlLang = (l) => document.documentElement.setAttribute('lang', l);
+const setHtmlLang = (l: string) => document.documentElement.setAttribute('lang', l);
 setHtmlLang(i18n.language);
 i18n.on('languageChanged', (l) => {
   setHtmlLang(l);

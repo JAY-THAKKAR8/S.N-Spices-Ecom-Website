@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Icon from './Icon';
@@ -25,12 +25,12 @@ export default function Header() {
 
   useEffect(() => setQ(params.get('q') || ''), [params]);
 
-  const onSearch = (e) => {
+  const onSearch = (e: FormEvent) => {
     e.preventDefault();
     nav(q.trim() ? `/shop?q=${encodeURIComponent(q.trim())}` : '/shop');
   };
 
-  const pill = ({ isActive }) =>
+  const pill = ({ isActive }: { isActive: boolean }) =>
     `px-3.5 py-1.5 rounded-full whitespace-nowrap text-label-md transition-colors ${
       isActive ? 'bg-primary-container text-on-primary' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
     }`;

@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { rupee } from '../lib/api';
+import type { Quote } from '../types';
 
-export default function BillDetails({ quote }) {
+export default function BillDetails({ quote }: { quote?: Quote | null }) {
   const { t } = useTranslation();
   if (!quote) return <div className="h-32 rounded-lg bg-surface-container animate-pulse" />;
   const mrpSave = quote.mrpTotal - quote.subtotal;
@@ -31,7 +33,7 @@ export default function BillDetails({ quote }) {
   );
 }
 
-function Row({ label, value, green }) {
+function Row({ label, value, green }: { label: string; value: ReactNode; green?: boolean }) {
   return (
     <div className={`flex items-center justify-between ${green ? 'text-tertiary-container font-medium' : 'text-on-surface-variant'}`}>
       <span>{label}</span>

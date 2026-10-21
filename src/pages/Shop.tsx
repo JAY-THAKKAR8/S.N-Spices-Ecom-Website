@@ -6,6 +6,7 @@ import Icon from '../components/Icon';
 import ProductCard, { ProductSkeleton } from '../components/ProductCard';
 import { api, rupee } from '../lib/api';
 import { useCategories, useCatName, useSettings } from '../lib/hooks';
+import type { Category, ProductList } from '../types';
 
 const PACKS = ['100g', '200g', '250g', '500g', '1kg', '5kg'];
 const MAX = 2500;
@@ -36,7 +37,7 @@ export default function Shop() {
   const [price, setPrice] = useState(maxPrice);
   useEffect(() => setPrice(maxPrice), [maxPrice]);
 
-  const update = (patch) => {
+  const update = (patch: Record<string, string | number | null>) => {
     const next = new URLSearchParams(params);
     for (const [k, v] of Object.entries(patch)) {
       if (v === '' || v == null || (k === 'maxPrice' && Number(v) >= MAX) || (k === 'sort' && v === 'popular') || (k === 'page' && v === 1)) next.delete(k);
@@ -46,7 +47,7 @@ export default function Shop() {
     setParams(next);
   };
 
-  const { data, isFetching, isLoading } = useQuery({
+  const { data, isFetching, isLoading } = useQuery<ProductList>({
     queryKey: ['products', category, q, maxPrice, pack.join(','), sort, page, i18n.language],
     queryFn: () =>
       api.get('/products', {
@@ -57,13 +58,13 @@ export default function Shop() {
 
   const cat = cats.find((c) => c.slug === category);
   const title = q ? `Results for "${q}"` : cat ? catName(cat) : 'All Products';
-  const active = [
-    q && { label: `"${q}"`, clear: { q: '' } },
-    maxPrice < MAX && { label: `Under ${rupee(maxPrice)}`, clear: { maxPrice: '' } },
+  const active: { label: string; clear: Record<string, string> }[] = [
+    ...(q ? [{ label: `"${q}"`, clear: { q: '' } }] : []),
+    ...(maxPrice < MAX ? [{ label: `Under ${rupee(maxPrice)}`, clear: { maxPrice: '' } }] : []),
     ...pack.map((p) => ({ label: p, clear: { pack: pack.filter((x) => x !== p).join(',') } })),
-  ].filter(Boolean);
+  ];
 
-  const togglePack = (p) => update({ pack: (pack.includes(p) ? pack.filter((x) => x !== p) : [...pack, p]).join(',') });
+  const togglePack = (p: string) => update({ pack: (pack.includes(p) ? pack.filter((x) => x !== p) : [...pack, p]).join(',') });
 
   const filters = (
     <div className="space-y-space-xl">
@@ -75,7 +76,7 @@ export default function Shop() {
       <div>
         <h3 className="text-label-md uppercase tracking-wider mb-space-sm">{t('categories')}</h3>
         <div className="space-y-1">
-          {[{ slug: 'all', nameEn: t('all'), productCount: null }, ...cats].map((c) => {
+          {([{ slug: 'all', nameEn: t('all'), productCount: null }, ...cats] as Category[]).map((c) => {
             const on = c.slug === category;
             return (
               <Link key={c.slug} to={`/shop${c.slug === 'all' ? '' : `/${c.slug}`}${q ? `?q=${encodeURIComponent(q)}` : ''}`} onClick={() => setOpen(false)}

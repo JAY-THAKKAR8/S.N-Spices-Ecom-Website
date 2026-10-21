@@ -4,15 +4,16 @@ import { useMutation } from '@tanstack/react-query';
 import Icon from '../components/Icon';
 import OrderView from '../components/OrderView';
 import { api } from '../lib/api';
+import type { Order } from '../types';
 
 export default function TrackOrder() {
   const [params] = useSearchParams();
   const [orderNo, setOrderNo] = useState(params.get('orderNo') || '');
   const [phone, setPhone] = useState(params.get('phone') || '');
-  const m = useMutation({ mutationFn: (p) => api.get('/orders/track', { params: p }).then((r) => r.data) });
+  const m = useMutation<Order, Error, { orderNo: string; phone: string }>({ mutationFn: (p) => api.get('/orders/track', { params: p }).then((r) => r.data) });
 
   useEffect(() => {
-    if (params.get('orderNo') && params.get('phone')) m.mutate({ orderNo: params.get('orderNo'), phone: params.get('phone') });
+    if (params.get('orderNo') && params.get('phone')) m.mutate({ orderNo: params.get('orderNo')!, phone: params.get('phone')! });
     // run once on open
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

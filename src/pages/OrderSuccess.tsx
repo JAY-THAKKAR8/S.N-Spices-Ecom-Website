@@ -3,10 +3,11 @@ import Icon from '../components/Icon';
 import OrderView from '../components/OrderView';
 import { waLink } from '../lib/api';
 import { orderWhatsAppText } from '../lib/whatsapp';
+import type { Order } from '../types';
 
 export default function OrderSuccess() {
   const { orderNo } = useParams();
-  const order = useLocation().state?.order;
+  const order = useLocation().state?.order as Order | undefined;
 
   return (
     <div className="container-x py-space-xl max-w-xl">

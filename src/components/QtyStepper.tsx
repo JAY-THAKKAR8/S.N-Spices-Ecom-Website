@@ -1,6 +1,13 @@
 import Icon from './Icon';
 
-export default function QtyStepper({ qty, onChange, size = 'md', dark = true }) {
+interface QtyStepperProps {
+  qty: number;
+  onChange: (qty: number) => void;
+  size?: 'sm' | 'md';
+  dark?: boolean;
+}
+
+export default function QtyStepper({ qty, onChange, size = 'md', dark = true }: QtyStepperProps) {
   const box = dark ? 'bg-tertiary text-on-tertiary' : 'bg-surface-container-lowest text-primary shadow-sm';
   const hov = dark ? 'hover:bg-tertiary-container' : 'hover:bg-surface-container';
   const pad = size === 'sm' ? 'w-7 h-7' : 'w-8 h-8';

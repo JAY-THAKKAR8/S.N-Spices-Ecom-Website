@@ -1,8 +1,9 @@
 import Icon from './Icon';
 import { rupee } from '../lib/api';
+import type { Order, OrderStatus } from '../types';
 
-export const STATUS_STEPS = ['PENDING', 'CONFIRMED', 'PACKED', 'OUT_FOR_DELIVERY', 'DELIVERED'];
-export const STATUS_LABEL = {
+export const STATUS_STEPS: OrderStatus[] = ['PENDING', 'CONFIRMED', 'PACKED', 'OUT_FOR_DELIVERY', 'DELIVERED'];
+export const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: 'Order placed',
   CONFIRMED: 'Confirmed',
   PACKED: 'Packed',
@@ -11,7 +12,7 @@ export const STATUS_LABEL = {
   CANCELLED: 'Cancelled',
 };
 
-export default function OrderView({ order: o }) {
+export default function OrderView({ order: o }: { order: Order }) {
   const step = STATUS_STEPS.indexOf(o.status);
   return (
     <div className="space-y-space-md">

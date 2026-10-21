@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import Icon from '../components/Icon';
 import QtyStepper from '../components/QtyStepper';
 import ProductCard from '../components/ProductCard';
-import { api, rupee, STORE, waLink } from '../lib/api';
+import { api, rupee, STORE, waLink, type ApiError } from '../lib/api';
 import { useSettings, useToast } from '../lib/hooks';
 import { useCart } from '../store/cart';
+import type { ProductDetailResponse, ProductSpec, Variant } from '../types';
 
-const per100 = (v) => (v.grams >= 50 ? Math.round((v.price / v.grams) * 100) : null);
-const offPct = (v) => (v.mrp > v.price ? Math.round(((v.mrp - v.price) / v.mrp) * 100) : 0);
+const per100 = (v: Variant) => (v.grams && v.grams >= 50 ? Math.round((v.price / v.grams) * 100) : null);
+const offPct = (v: Variant) => (v.mrp > v.price ? Math.round(((v.mrp - v.price) / v.mrp) * 100) : 0);
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -19,14 +20,14 @@ export default function ProductDetail() {
   const toast = useToast((s) => s.show);
   const { data: settings } = useSettings();
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error } = useQuery<ProductDetailResponse, ApiError>({
     queryKey: ['product', slug, i18n.language],
     queryFn: () => api.get(`/products/${slug}`, { params: { lang: i18n.language } }).then((r) => r.data),
     retry: (n, e) => e?.response?.status !== 404 && n < 1,
   });
   const p = data?.product;
 
-  const [vid, setVid] = useState(null);
+  const [vid, setVid] = useState<number | null>(null);
   const [qty, setQty] = useState(1);
   const [img, setImg] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -67,7 +68,7 @@ export default function ProductDetail() {
   const low = v && v.stock > 0 && v.stock <= 10;
   const images = p.images.length ? p.images : [null];
 
-  const addToCart = (go) => {
+  const addToCart = (go?: boolean) => {
     if (out) return;
     if (maxQty <= 0) {
       if (go) nav('/cart');
@@ -131,9 +132,9 @@ export default function ProductDetail() {
           {images.length > 1 && (
             <div className="flex gap-2 overflow-x-auto no-scrollbar">
               {images.map((src, i) => (
-                <button key={src} onClick={() => setImg(i)} aria-label={`Photo ${i + 1}`} aria-current={i === img}
+                <button key={src ?? i} onClick={() => setImg(i)} aria-label={`Photo ${i + 1}`} aria-current={i === img}
                   className={`w-20 h-20 shrink-0 overflow-hidden bg-surface-container border-2 ${i === img ? 'border-primary' : 'border-transparent opacity-70 hover:opacity-100'}`}>
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={src ?? undefined} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -322,7 +323,7 @@ export default function ProductDetail() {
                   p.botanicalName && { label: 'Botanical name', value: p.botanicalName },
                   p.grade && { label: 'Grade', value: p.grade },
                   ...p.specs,
-                ].filter(Boolean).map((s, i) => (
+                ].filter((s): s is ProductSpec => !!s).map((s, i) => (
                   <tr key={s.label} className={i % 2 ? 'bg-surface-container-low' : ''}>
                     <th scope="row" className="py-3 px-4 font-medium text-on-surface w-2/5 align-top">{s.label}</th>
                     <td className="py-3 px-4 text-on-surface-variant">{s.value}</td>

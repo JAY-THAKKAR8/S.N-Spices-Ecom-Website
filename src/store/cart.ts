@@ -1,11 +1,31 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { CartItem, QuoteLine, Variant } from '../types';
+
+interface CartProduct {
+  id: number;
+  slug: string;
+  name: string;
+  image?: string | null;
+}
+
+interface CartState {
+  items: Record<number, CartItem>; // keyed by variantId
+  couponCode: string;
+  add: (product: CartProduct, variant: Variant, qty?: number) => void;
+  setQty: (variantId: number, qty: number) => void;
+  remove: (variantId: number) => void;
+  setCoupon: (couponCode: string) => void;
+  clear: () => void;
+  syncFromQuote: (lines: QuoteLine[]) => void;
+  list: () => CartItem[];
+}
 
 // Cart lives in the browser (guest checkout). Server re-checks prices at checkout.
-export const useCart = create(
+export const useCart = create<CartState>()(
   persist(
     (set, get) => ({
-      items: {}, // { [variantId]: { variantId, productId, slug, name, packSize, price, mrp, image, qty } }
+      items: {},
       couponCode: '',
 
       add: (product, variant, qty = 1) =>

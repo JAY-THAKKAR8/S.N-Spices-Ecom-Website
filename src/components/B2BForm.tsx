@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import Icon from './Icon';
 import { api, STORE, waLink } from '../lib/api';
@@ -9,10 +9,10 @@ const PRODUCTS = ['Cumin Seeds (Jeera)', 'Turmeric Powder', 'Green Cardamom', 'B
 export default function B2BForm() {
   const empty = { businessName: '', phone: '', product: PRODUCTS[0], monthlyQty: QTY[0], cityPincode: '' };
   const [f, setF] = useState(empty);
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const set = (k: keyof typeof empty) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
 
   const m = useMutation({
-    mutationFn: (body) => api.post('/b2b-inquiries', body).then((r) => r.data),
+    mutationFn: (body: typeof empty) => api.post('/b2b-inquiries', body).then((r) => r.data),
     onSuccess: () => setF(empty),
   });
 

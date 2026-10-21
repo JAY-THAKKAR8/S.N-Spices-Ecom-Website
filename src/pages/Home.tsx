@@ -8,6 +8,7 @@ import B2BForm from '../components/B2BForm';
 import { api } from '../lib/api';
 import { useCategories, useCatName, useSettings } from '../lib/hooks';
 import { HERO } from '../lib/images';
+import type { ProductList } from '../types';
 
 const TRUST = [
   { icon: 'cleaning_services', title: 'Cleaned & Sorted', text: 'Machine cleaned, no dust or stones.' },
@@ -24,7 +25,7 @@ export default function Home() {
   const { data: settings } = useSettings();
   const [tab, setTab] = useState('all');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<ProductList>({
     queryKey: ['featured', tab, i18n.language],
     queryFn: () =>
       api.get('/products', { params: { featured: tab === 'all' ? 'true' : undefined, category: tab === 'all' ? undefined : tab, limit: 8, lang: i18n.language } }).then((r) => r.data),
@@ -34,7 +35,7 @@ export default function Home() {
     if (hash) document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' });
   }, [hash]);
 
-  const tabs = [{ slug: 'all', label: t('all') }, ...cats.filter((c) => c.productCount > 0).slice(0, 4).map((c) => ({ slug: c.slug, label: catName(c) }))];
+  const tabs = [{ slug: 'all', label: t('all') }, ...cats.filter((c) => (c.productCount ?? 0) > 0).slice(0, 4).map((c) => ({ slug: c.slug, label: catName(c) }))];
   const items = data?.items || [];
 
   return (
@@ -191,7 +192,7 @@ export default function Home() {
   );
 }
 
-function HeroTile({ img, kicker, title, to, tall }) {
+function HeroTile({ img, kicker, title, to, tall = false }: { img: string; kicker: string; title: string; to: string; tall?: boolean }) {
   return (
     <Link to={to} className={`relative rounded-2xl overflow-hidden shadow-lg bg-surface-container group ${tall ? 'aspect-[4/5]' : 'flex-1 min-h-[120px]'}`}>
       <img src={img} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

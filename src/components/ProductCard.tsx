@@ -6,8 +6,9 @@ import QtyStepper from './QtyStepper';
 import { useCart } from '../store/cart';
 import { useToast } from '../lib/hooks';
 import { rupee } from '../lib/api';
+import type { Product } from '../types';
 
-export default function ProductCard({ product, wide = false }) {
+export default function ProductCard({ product, wide = false }: { product: Product; wide?: boolean }) {
   const { t } = useTranslation();
   const variants = product.variants || [];
   const [vid, setVid] = useState(variants[0]?.id);

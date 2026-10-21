@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -9,8 +9,9 @@ import ProductCard from '../components/ProductCard';
 import { useCart, useCartSummary } from '../store/cart';
 import { useQuote } from '../lib/useQuote';
 import { useSettings } from '../lib/hooks';
-import { api, rupee, waLink } from '../lib/api';
+import { api, errMsg, rupee, waLink } from '../lib/api';
 import { cartWhatsAppText } from '../lib/whatsapp';
+import type { Product } from '../types';
 
 export default function Cart() {
   const { t, i18n } = useTranslation();
@@ -26,14 +27,14 @@ export default function Cart() {
   const [couponErr, setCouponErr] = useState('');
   const [checking, setChecking] = useState(false);
 
-  const { data: suggestions = [] } = useQuery({
+  const { data: suggestions = [] } = useQuery<Product[]>({
     queryKey: ['suggest', list.map((i) => i.productId).join(','), i18n.language],
     queryFn: () => api.get('/suggestions', { params: { exclude: list.map((i) => i.productId).join(','), lang: i18n.language } }).then((r) => r.data),
     enabled: count > 0,
     staleTime: 5 * 60_000,
   });
 
-  const applyCoupon = async (e) => {
+  const applyCoupon = async (e: FormEvent) => {
     e.preventDefault();
     setCouponErr('');
     if (!code.trim()) return;
@@ -43,7 +44,7 @@ export default function Cart() {
       setCoupon(code.trim().toUpperCase());
       setCode('');
     } catch (err) {
-      setCouponErr(err.message);
+      setCouponErr(errMsg(err));
     } finally {
       setChecking(false);
     }

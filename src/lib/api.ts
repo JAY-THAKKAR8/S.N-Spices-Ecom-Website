@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 
 // Dev: Vite proxies /api to Express. Prod: set VITE_API_URL if API is on another domain.
 export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api' });
@@ -6,13 +6,17 @@ export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api
 
 api.interceptors.response.use(
   (r) => r,
-  (err) => {
+  (err: ApiError) => {
     err.message = err.response?.data?.message || 'Network error. Please try again.';
     return Promise.reject(err);
   },
 );
 
-export const rupee = (n) =>
+export type ApiError = AxiosError<{ message?: string }>;
+
+export const errMsg = (e: unknown): string => (e instanceof Error ? e.message : 'Something went wrong');
+
+export const rupee = (n: number | string | null | undefined): string =>
   '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: Number(n) % 1 ? 2 : 0 });
 
 export const STORE = {
@@ -22,4 +26,4 @@ export const STORE = {
   city: 'Borsad, Gujarat',
 };
 
-export const waLink = (text) => `https://wa.me/${STORE.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+export const waLink = (text?: string): string => `https://wa.me/${STORE.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
