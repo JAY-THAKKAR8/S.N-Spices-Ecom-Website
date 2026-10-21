@@ -1,0 +1,6 @@
+// Hero images from the design mockups. Replace with the store's own photos.
+export const HERO = {
+  cardamom: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMBa4G-ccyq95SNUEH0jPRuAq_ywe9lgZOyRuVwIgFXuedRlxaAz8wL56hvTjXZO9DESCwbqqqma-tLl5aaoW47XK4O9ZS92OZdwMQUNPJo4-uWY02ByeKhelBFF7URmf5VOEuTzQXhtvvbvhpNzO4ruoV_dTsRA9e9iD5Pyn_xV0IAgIMdhW1s8HMz-DQsxVmn8o_9n0aTwPxiEElP9kimReeK0hpvrJJKQj9QIurgcxFCNJw2Q0',
+  turmeric: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBLatU0R0yQRueSQJqUnFwmfjMQSHRVA9pwNZkDGjppwXyXft-ekotem8aNvAvyR1nJHpWXYMYjJw7D7i6Z9K5R7Dv6IB7Lel5sU9LTMNh5SVmX6oAYScxDo7HD9irjV3S14gw-s-UAYgebuYMW01-b7ZBwU4LvTgqnxJxxdzq1DhF42uXuEAuryP1ppXoBBYFjeuJOhTzlc5UcxBT6UiO_SOmn6ToR-n4KubCxSxSQ6jzBRHu5Yzk',
+  saffron: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBv-NW4P7VOp8S6S0Hy79AkrJ1P4PHEsxySvgyOJK0enz4pO7wzl2GjkEbwH7iZI9jlndpjTURBLYkzApFU1B5W5y32QtSHTarEUWNA0VWds1WMxBetXlI07LqlgmJjl6vcr5mc-W3xGpTzoYHKDzsS_wZrOC8UsM0SFHkRlbOf9Fd6gcMgxxl_uGRR9bfqBNIH5Ma1jBxE63yiINeX5nCN6EQrLMCC3zze1GQVnZ7-eDwqoFX-f0g',
+};

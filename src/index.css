@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body { margin: 0; padding: 0; }
+  body {
+    @apply bg-background text-on-surface font-sans text-body-md antialiased;
+    overscroll-behavior: none;
+  }
+  /* Gujarati / Hindi need their own fonts */
+  html[lang='gu'] body { font-family: 'Plus Jakarta Sans', 'Noto Sans Gujarati', sans-serif; }
+  html[lang='hi'] body { font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif; }
+  :focus-visible { @apply outline-none ring-2 ring-primary/60 ring-offset-1; }
+}
+
+@layer components {
+  .icon {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400;
+  }
+  .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400; }
+  .container-x { @apply max-w-7xl mx-auto px-4 sm:px-margin w-full; }
+  .card { @apply bg-surface-container-lowest rounded-xl shadow-sm; }
+  .btn { @apply inline-flex items-center justify-center gap-1.5 rounded-xl text-label-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary { @apply btn bg-primary text-on-primary hover:bg-primary-container px-5 py-3 shadow-md; }
+  .btn-green { @apply btn bg-tertiary text-on-tertiary hover:bg-tertiary-container px-5 py-3 shadow-md; }
+  .btn-soft { @apply btn bg-surface-container text-on-surface hover:bg-surface-container-high px-4 py-2.5; }
+  .input { @apply w-full bg-surface-container text-on-surface text-body-md px-3 py-2.5 rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary placeholder:text-outline; }
+  .label { @apply block text-label-md text-on-surface mb-1; }
+  .chip { @apply inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-bold; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+}
